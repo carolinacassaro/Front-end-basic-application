@@ -1,0 +1,6 @@
+This project demonstrates frontend authentication concepts using browser storage (sessionStorage).
+
+It is a client-side–only implementation intended for learning and portfolio purposes.
+
+No sensitive data should be stored this way in production applications.
+ 
