@@ -20,3 +20,12 @@
 .inputGroup input:focus {
   outline: none;
 }
+
+.plain-link p{
+  color: black;
+}
+
+.plain-link a:hover{
+  color: rgb(11, 105, 182);
+  text-decoration: underline;
+}

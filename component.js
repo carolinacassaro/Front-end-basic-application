@@ -23,21 +23,6 @@ class Navbar extends HTMLElement {
     return navbar;
   }
 
-  navItem(name, type) {
-    const navItem = document.createElement("a");
-    navItem.classList.add("navItem");
-    navItem.setAttribute("href", "#");
-    navItem.addEventListener("click", (element) => {
-      element.preventDefault();
-      const myContent = document.querySelector("my-content");
-      myContent.setAttribute("type", type);
-    });
-    navItem.innerHTML = `
-        ${name}
-    `;
-    return navItem;
-  }
-
   navStart() {
     const navStart = document.createElement("div");
     navStart.classList.add("navGroup");
@@ -58,6 +43,24 @@ class Navbar extends HTMLElement {
     return navEnd;
   }
 
+  navItem(name, type) {
+    const navItem = document.createElement("a");
+    navItem.classList.add("navItem");
+    navItem.setAttribute("href", "#");
+    navItem.addEventListener("click", (element) => {
+      element.preventDefault();
+      this.setType(type);
+    });
+    navItem.innerHTML = `
+        ${name}
+    `;
+    return navItem;
+  }
+
+  setType(type) {
+    const myContent = document.querySelector("my-content");
+    myContent.setAttribute("type", type);
+  }
   styles() {
     const style = document.createElement("style");
     style.textContent = `
@@ -117,6 +120,8 @@ class MyContent extends HTMLElement {
       this.appendChild(this.homePage());
     } else if (type === "signUp") {
       this.appendChild(this.signUpForm());
+    } else if (type === "signIn") {
+      this.appendChild(this.signInForm());
     } else {
       // default/empty state
     }
@@ -139,10 +144,10 @@ No sensitive data should be stored this way in production applications.
     const signUpForm = document.createElement("div");
     signUpForm.innerHTML = `
     <div class="
-    p-5 bg-gray-200 rounded-lg my-2 mx-50 shadow flex-col
+    p-5 bg-gray-200 rounded-lg my-2 mx-50 shadow flex flex-col text-center
     ">
-    <h2 class="text-2xl font-bold mb-4 text-center">Sign Up</h2>
-    <form id="signUp-form" action="" class="grid gap-4" method='POST'>
+    <h2 class="text-2xl font-bold mb-4">Sign Up</h2>
+    <form id="signup-form" action="" class="grid gap-4" method='POST'>
       <div class="inputGroup">
         <label for="name">Name: </label>
         <input type="text" name="name" id="name"/>
@@ -161,12 +166,69 @@ No sensitive data should be stored this way in production applications.
       hover:bg-blue-400 transition-colors duration-300">
       Sign Up</button>
     </form>
+      <div class="mt-2 plain-link">
+        <p> Already have an account? </p>
+        <a href="#" id="signin-route" > Welcome back and Sign In! </a>
+      </div>
+      
     </div>
     `;
 
+    this.addEventListener("click", (event) => {
+      const target = event.target;
+      if (target.id === "signin-route") {
+        this.setType("signIn");
+      }
+    });
+
     return signUpForm;
+  }
+
+  signInForm() {
+    const signInForm = document.createElement("div");
+    signInForm.innerHTML = `
+    <div class="
+    p-5 bg-gray-200 rounded-lg my-2 mx-50 shadow flex flex-col text-center
+    ">
+    <h2 class="text-2xl font-bold mb-4">Sign In</h2>
+    <form id="signin-form" action="" class="grid gap-4" method='POST'>
+      <div class="inputGroup">
+        <label for="email">Email: </label>
+        <input type="text" name="email" id="email" />
+      </div>
+      <div class="inputGroup">
+        <label for="password">Password: </label>
+        <input type="password" name="password" id="password" />
+      </div>
+
+      <button id='button' type="submit" 
+      class="inline bg-blue-400 text-white px-4 py-2 rounded 
+      hover:bg-blue-300 transition-colors duration-300">
+      Sign in</button>
+    </form>
+    <div class="mt-2 plain-link"> 
+      <p> Still don't have an account? </p>
+      <a href="#" id="signup-route"> Sign Up! </p>
+    </div>
+    </div>
+    `;
+
+    this.addEventListener("click", (event) => {
+      const target = event.target;
+      if (target.id === "signup-route") {
+        this.setType("signUp");
+      }
+    });
+
+    return signInForm;
+  }
+
+  setType(type) {
+    const myContent = document.querySelector("my-content");
+    myContent.setAttribute("type", type);
   }
 }
 
 customElements.define("nav-bar", Navbar);
 customElements.define("my-content", MyContent);
+
