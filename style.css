@@ -29,3 +29,57 @@
   color: rgb(11, 105, 182);
   text-decoration: underline;
 }
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes dropDownUp {
+  0% {
+    top:1rem;
+  }
+  15% {
+    top: 2rem;
+  }
+  85% {
+    top: 2rem;
+  }
+  100% {
+    top: 1rem;
+  }
+}
+
+.notification{
+  position: fixed;
+  background-color: rgb(233, 233, 233);
+  color: rgb(0, 0, 0);
+  min-width: 20rem;
+  height: 3rem; 
+  border-radius: 1em; 
+  padding: 5px 10px 5px 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 
+  0 1px 2px -1px rgb(0 0 0 / 0.1);
+  animation: fadeInOut 3s ease-in-out forwards,
+  dropDownUp 3s ease-in-out forwards;
+
+}
+
+
+.notification.error{
+  background-color: rgb(255, 204, 204);
+  color: rgb(94, 18, 18);
+}

@@ -26,34 +26,43 @@ document.addEventListener("DOMContentLoaded", () => {
 
       sessionStorage.setItem("userArray", JSON.stringify(userArray));
       //in a regular application this user would be storaged in a database
-
-      myContent = document.querySelector("my-content");
+      const myContent = document.querySelector("my-content");
       myContent.setAttribute("type", "signIn");
-
     } else if (target.id === "signin-form") {
       event.preventDefault();
 
       const formData = new FormData(target);
       const tryUser = Object.fromEntries(formData);
-      const signedUpUsers = JSON.parse(sessionStorage.getItem("userArray"));
+      let signedUpUsers = sessionStorage.getItem("userArray") || null;
+      const myNotification = document.querySelector("my-notification");
+
+      if (!signedUpUsers || signedUpUsers.length === 0) {
+        myNotification.createMsg("User not found.", "error");
+        return;
+      }
+
+      signedUpUsers = JSON.parse(signedUpUsers);
+      console.log(typeof signedUpUsers);
+      console.log(signedUpUsers);
 
       signedUpUsers.forEach((user) => {
         if (user.email === tryUser.email) {
           if (user.password === tryUser.password) {
             sessionStorage.setItem("isAuth", true);
             sessionStorage.setItem("currentUser", tryUser.email);
-            const myContent = document.querySelector('my-content');
-            myContent.setAttribute('type', "homePage");
-            
-            const navBar = document.querySelector('nav-bar');
+            const myContent = document.querySelector("my-content");
+            myContent.setAttribute("type", "homePage");
+
+            const navBar = document.querySelector("nav-bar");
             navBar.build();
-            
+            myNotification.createMsg("Welcome " + user.name + " !");
+          } else {
+            myNotification.createMsg("Password incorret.", "error");
           }
-          return;
+        } else {
+          myNotification.createMsg("User not found.", "error");
         }
-        return;
       });
     }
   });
-  
 });

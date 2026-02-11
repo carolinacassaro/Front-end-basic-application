@@ -39,7 +39,7 @@ class Navbar extends HTMLElement {
       navEnd.appendChild(this.navItem("profile", null, null));
       navEnd.appendChild(this.navItem("Sign Out", "sign-out", null));
     } else {
-      navEnd.appendChild(this.navItem("Sign In", null,"signIn"));
+      navEnd.appendChild(this.navItem("Sign In", null, "signIn"));
     }
     return navEnd;
   }
@@ -86,8 +86,12 @@ class Navbar extends HTMLElement {
         .nav{
           display: flex;
           background-color: gray;
-          height: 6vh;
+          height: 3rem;
           justify-content: space-between;
+          position: fixed;
+          right: 0;
+          left: 0;
+          top: 0;
         }
         .navGroup{
           display: flex;
@@ -153,7 +157,7 @@ class MyContent extends HTMLElement {
       "rounded-lg",
       "bg-gray-200",
       "shadow",
-      "w-200",
+      "w-xl",
     );
     homePage.innerHTML = ` 
     <p>This project demonstrates frontend authentication concepts using browser storage (sessionStorage).
@@ -169,7 +173,7 @@ No sensitive data should be stored this way in production applications.
     const signUpForm = document.createElement("div");
     signUpForm.innerHTML = `
     <div class="
-    p-5 bg-gray-200 rounded-lg w-120 shadow flex flex-col text-center
+    p-5 bg-gray-200 rounded-lg w-lg shadow flex flex-col text-center
     ">
     <h2 class="text-2xl font-bold mb-4">Sign Up</h2>
     <form id="signup-form" action="" class="grid gap-4" method='POST'>
@@ -213,7 +217,7 @@ No sensitive data should be stored this way in production applications.
     const signInForm = document.createElement("div");
     signInForm.innerHTML = `
     <div class="
-    p-5 bg-gray-200 rounded-lg w-120 shadow flex flex-col text-center
+    p-5 bg-gray-200 rounded-lg w-lg shadow flex flex-col text-center
     ">
     <h2 class="text-2xl font-bold mb-4">Sign In</h2>
     <form id="signin-form" action="" class="grid gap-4" method='POST'>
@@ -254,5 +258,33 @@ No sensitive data should be stored this way in production applications.
   }
 }
 
+class MyNotification extends HTMLElement {
+  constructor() {
+    super();
+  }
+
+  createMsg(msg, type) {
+    const myContent = document.querySelector("my-content");
+    const myNotification = myContent.appendChild(this.message(msg, type));
+    
+
+    this.addEventListener("animationend", (event) => {
+      if (myContent.myNotification)
+      myContent.removeChild(myNotification);
+    });
+  }
+
+  message(msg, type) {
+    const myNotification = document.querySelector('my-notification');
+    myNotification.classList.add("notification", type);
+    myNotification.innerHTML = `
+       ${msg}
+     `;
+
+    return myNotification;
+  }
+}
+
 customElements.define("nav-bar", Navbar);
 customElements.define("my-content", MyContent);
+customElements.define("my-notification", MyNotification);
