@@ -6,13 +6,13 @@ class Navbar extends HTMLElement {
   }
 
   build() {
-    const shadow = this.attachShadow({ mode: "open" });
-
+    if (!this.shadowRoot) {
+      this.attachShadow({ mode: "open" });
+    }
+    const shadow = this.shadowRoot;
+    shadow.innerHTML = "";
     shadow.appendChild(this.styles());
-
-    const navbar = this.navbar();
-
-    shadow.appendChild(navbar);
+    shadow.appendChild(this.navbar());
   }
 
   navbar() {
@@ -27,7 +27,7 @@ class Navbar extends HTMLElement {
     const navStart = document.createElement("div");
     navStart.classList.add("navGroup");
 
-    navStart.appendChild(this.navItem("HomePage", "homePage"));
+    navStart.appendChild(this.navItem("HomePage", null, "homePage"));
     return navStart;
   }
 
@@ -36,21 +36,30 @@ class Navbar extends HTMLElement {
     navEnd.classList.add("navGroup");
 
     if (sessionStorage.getItem("isAuth")) {
-      navEnd.appendChild(this.navItem("profile", null));
+      navEnd.appendChild(this.navItem("profile", null, null));
+      navEnd.appendChild(this.navItem("Sign Out", "sign-out", null));
     } else {
-      navEnd.appendChild(this.navItem("Sign In", "signIn"));
+      navEnd.appendChild(this.navItem("Sign In", null,"signIn"));
     }
     return navEnd;
   }
 
-  navItem(name, type) {
+  navItem(name, id, type) {
     const navItem = document.createElement("a");
     navItem.classList.add("navItem");
+    navItem.setAttribute("id", id);
     navItem.setAttribute("href", "#");
-    navItem.addEventListener("click", (element) => {
-      element.preventDefault();
-      this.setType(type);
+
+    // Attach the click handler directly to the anchor so it runs once per element
+    navItem.addEventListener("click", (event) => {
+      event.preventDefault();
+      if (id === "sign-out") {
+        this.signOut();
+      } else if (type) {
+        this.setType(type);
+      }
     });
+
     navItem.innerHTML = `
         ${name}
     `;
@@ -60,6 +69,16 @@ class Navbar extends HTMLElement {
   setType(type) {
     const myContent = document.querySelector("my-content");
     myContent.setAttribute("type", type);
+  }
+
+  signOut() {
+    if (sessionStorage.getItem("isAuth")) {
+      sessionStorage.removeItem("currentUser");
+      sessionStorage.removeItem("isAuth");
+      // re-render nav to reflect unauthenticated state
+      this.build();
+      this.setType("homePage");
+    }
   }
   styles() {
     const style = document.createElement("style");
@@ -129,7 +148,13 @@ class MyContent extends HTMLElement {
 
   homePage() {
     const homePage = document.createElement("div");
-    homePage.classList.add("p-5", "m-2", "rounded-lg", "bg-gray-200", "shadow");
+    homePage.classList.add(
+      "p-5",
+      "rounded-lg",
+      "bg-gray-200",
+      "shadow",
+      "w-200",
+    );
     homePage.innerHTML = ` 
     <p>This project demonstrates frontend authentication concepts using browser storage (sessionStorage).
 It is a client-side–only implementation intended for learning and portfolio purposes.
@@ -144,7 +169,7 @@ No sensitive data should be stored this way in production applications.
     const signUpForm = document.createElement("div");
     signUpForm.innerHTML = `
     <div class="
-    p-5 bg-gray-200 rounded-lg my-2 mx-50 shadow flex flex-col text-center
+    p-5 bg-gray-200 rounded-lg w-120 shadow flex flex-col text-center
     ">
     <h2 class="text-2xl font-bold mb-4">Sign Up</h2>
     <form id="signup-form" action="" class="grid gap-4" method='POST'>
@@ -188,7 +213,7 @@ No sensitive data should be stored this way in production applications.
     const signInForm = document.createElement("div");
     signInForm.innerHTML = `
     <div class="
-    p-5 bg-gray-200 rounded-lg my-2 mx-50 shadow flex flex-col text-center
+    p-5 bg-gray-200 rounded-lg w-120 shadow flex flex-col text-center
     ">
     <h2 class="text-2xl font-bold mb-4">Sign In</h2>
     <form id="signin-form" action="" class="grid gap-4" method='POST'>
@@ -231,4 +256,3 @@ No sensitive data should be stored this way in production applications.
 
 customElements.define("nav-bar", Navbar);
 customElements.define("my-content", MyContent);
-
