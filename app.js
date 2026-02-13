@@ -1,17 +1,28 @@
-const userArray = [];
-
 // the form is in a web component, so I need to listen when it renders on the DOM only
 
 document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("submit", (event) => {
     const target = event.target;
 
+    //----------------------------------SIGN UP FORM
+
     if (target.id === "signup-form") {
       event.preventDefault();
 
       const formData = new FormData(target);
       const user = Object.fromEntries(formData);
-      userArray.push(user);
+
+      // TO DO: VALIDATION
+
+      if (!sessionStorage.getItem("userArray")) {
+        const userArray = [];
+        userArray.push(user);
+        sessionStorage.setItem("userArray", JSON.stringify(userArray));
+      } else {
+        const userArray = JSON.parse(sessionStorage.getItem("userArray"));
+        userArray.push(user);
+        sessionStorage.setItem("userArray", JSON.stringify(userArray));
+      }
 
       // -------------------------------------------------------
       //          other option to set the object:
@@ -22,12 +33,13 @@ document.addEventListener("DOMContentLoaded", () => {
       //   }
       // -------------------------------------------------------
 
-      // Do validation
-
-      sessionStorage.setItem("userArray", JSON.stringify(userArray));
       //in a regular application this user would be storaged in a database
       const myContent = document.querySelector("my-content");
       myContent.setAttribute("type", "signIn");
+
+    //END-------------------------------------------------------
+
+    //----------------------------------SIGN IN FORM
     } else if (target.id === "signin-form") {
       event.preventDefault();
 
@@ -42,8 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       signedUpUsers = JSON.parse(signedUpUsers);
-      console.log(typeof signedUpUsers);
-      console.log(signedUpUsers);
+      let isUser = "";
 
       signedUpUsers.forEach((user) => {
         if (user.email === tryUser.email) {
@@ -55,14 +66,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const navBar = document.querySelector("nav-bar");
             navBar.build();
-            myNotification.createMsg("Welcome " + user.name + " !");
-          } else {
-            myNotification.createMsg("Password incorret.", "error");
+            isUser += user.name;
           }
-        } else {
-          myNotification.createMsg("User not found.", "error");
         }
       });
+
+      if (isUser) {
+        myNotification.createMsg("Welcome " + isUser + "!");
+      } else {
+        myNotification.createMsg("User not found.", "error");
+      }
     }
+
+    //END-------------------------------------------------------
   });
 });
