@@ -35,12 +35,12 @@ document.addEventListener("DOMContentLoaded", () => {
       // -------------------------------------------------------
 
       //in a regular application this user would be storaged in a database
-      
+
       myContent.setAttribute("type", "signIn");
 
-    //END-------------------------------------------------------
+      //END-------------------------------------------------------
 
-    //----------------------------------SIGN IN FORM
+      //----------------------------------SIGN IN FORM
     } else if (target.id === "signin-form") {
       event.preventDefault();
 
@@ -48,8 +48,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const tryUser = Object.fromEntries(formData);
       let signedUpUsers = sessionStorage.getItem("userArray") || null;
 
-      if (!document.querySelector("my-notification")){
-        document.createElement('my-notification');
+      if (!document.querySelector("my-notification")) {
+        document.createElement("my-notification");
       }
 
       let myNotification = document.querySelector("my-notification");
@@ -60,27 +60,49 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       signedUpUsers = JSON.parse(signedUpUsers);
-      let isUser = "";
 
-      signedUpUsers.forEach((user) => {
-        if (user.email === tryUser.email) {
-          if (user.password === tryUser.password) {
-            sessionStorage.setItem("isAuth", true);
-            sessionStorage.setItem("currentUser", tryUser.email);
-            const myContent = document.querySelector("my-content");
-            myContent.setAttribute("type", "homePage");
+      ///////////// OLD CODE
 
-            const navBar = document.querySelector("nav-bar");
-            navBar.build();
-            isUser += user.name;
-          }
-        }
-      });
+      // signedUpUsers.forEach((user) => {
+      //   if (user.email === tryUser.email) {
+      //     if (user.password === tryUser.password) {
+      //       sessionStorage.setItem("isAuth", true);
+      //       sessionStorage.setItem("currentUser", tryUser.email);
+      //       const myContent = document.querySelector("my-content");
+      //       myContent.setAttribute("type", "homePage");
 
-      if (isUser) {
-        myNotification.createMsg("Welcome " + isUser + "!");
-      } else { 
+      //       const navBar = document.querySelector("nav-bar");
+      //       navBar.build();
+      //       isUser += user.name;
+      //     }
+      //   }
+      // });
+
+      // if (isUser) {
+      //   myNotification.createMsg("Welcome " + isUser + "!");
+      // } else {
+      //   myNotification.createMsg("User not found.", "error");
+      // }
+
+      /////////////// NEW CODE:
+
+      user = signedUpUsers.find((u) => u.email === tryUser.email);
+      
+      if (!user) {
         myNotification.createMsg("User not found.", "error");
+      } else if (!user.password === tryUser.password) {
+        myNotification.createMsg("Passoword incorrect.", "error");
+      } else {
+        sessionStorage.setItem("isAuth", true);
+        sessionStorage.setItem("currentUser", tryUser.email);
+        const myContent = document.querySelector("my-content");
+        myContent.setAttribute("type", "homePage");
+
+        const navBar = document.querySelector("nav-bar");
+        navBar.build();
+        let isUser = user.name;
+
+        myNotification.createMsg("Welcome " + isUser + "!");
       }
     }
 

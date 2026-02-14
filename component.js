@@ -36,7 +36,7 @@ class Navbar extends HTMLElement {
     navEnd.classList.add("navGroup");
 
     if (sessionStorage.getItem("isAuth")) {
-      navEnd.appendChild(this.navItem("profile", null, null));
+      navEnd.appendChild(this.navItem("profile", null, "profilePage"));
       navEnd.appendChild(this.navItem("Sign Out", "sign-out", null));
     } else {
       navEnd.appendChild(this.navItem("Sign In", null, "signIn"));
@@ -140,12 +140,14 @@ class MyContent extends HTMLElement {
     this.innerHTML = "";
 
     if (type === "homePage") {
-      this.appendChild(this.homePage());
+      this.replaceChildren(this.homePage());
     } else if (type === "signUp") {
-      this.appendChild(this.signUpForm());
+      this.replaceChildren(this.signUpForm());
     } else if (type === "signIn") {
-      this.appendChild(this.signInForm());
-    } else {
+      this.replaceChildren(this.signInForm());
+    } else if (type === "profilePage"){
+      this.replaceChildren(this.profilePage());
+    }else{
       // default/empty state
     }
   }
@@ -255,6 +257,26 @@ No sensitive data should be stored this way in production applications.
   setType(type) {
     const myContent = document.querySelector("my-content");
     myContent.setAttribute("type", type);
+  }
+
+  profilePage(){
+    const profilePage = document.createElement('div');
+    let email = sessionStorage.getItem('currentUser');
+    let users = JSON.parse(sessionStorage.getItem('userArray'));
+    console.log(users);
+    let user = users.find(u => u.email === email);
+    console.log(user);
+    let name = user?.name;
+
+    profilePage.innerHTML = `
+      <div class="w-xs bg-gray-200 shadow flex flex-col rounded-lg justify-center p-5">
+        <h2 class="text-center text-2xl font-bold mb-4">My Profile</h2>
+        <div class="gap-2 mt-2">
+          <h3><b>Name:</b> ${name}</h3>
+          <h3><b>Email:</b> ${email}</h3>
+        </div>
+    `;
+    return profilePage;
   }
 }
 
