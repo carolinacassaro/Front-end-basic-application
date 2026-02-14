@@ -261,27 +261,39 @@ No sensitive data should be stored this way in production applications.
 class MyNotification extends HTMLElement {
   constructor() {
     super();
+
+    const container = document.querySelector(".container");
+    let myNotification = container.querySelector("my-notification");
+
+    if (!myNotification) {
+      document.createElement("my-notification");
+    }
+    
+    container.appendChild(myNotification);
+    myNotification.classList.add('flex', 'justify-center', 'fixed')
   }
 
-  createMsg(msg, type) {
-    const myContent = document.querySelector("my-content");
-    const myNotification = myContent.appendChild(this.message(msg, type));
-    
+  createMsg(msg, type = "regular") {
+    let myNotification = document.querySelector("my-notification");
+    const messageElement = this.message(msg, type);
+    myNotification.replaceChildren(messageElement);
 
-    this.addEventListener("animationend", (event) => {
-      if (myContent.myNotification)
-      myContent.removeChild(myNotification);
-    });
+    this.addEventListener("animationend", () => {
+        if (messageElement) {
+          messageElement.remove();
+        }
+      }, { once: true },
+    );
   }
 
   message(msg, type) {
-    const myNotification = document.querySelector('my-notification');
-    myNotification.classList.add("notification", type);
-    myNotification.innerHTML = `
+    let message = document.createElement("div");
+    message.classList.add("notification", type);
+    message.innerHTML = `
        ${msg}
      `;
 
-    return myNotification;
+    return message;
   }
 }
 

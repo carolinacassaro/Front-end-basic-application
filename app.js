@@ -1,4 +1,5 @@
 // the form is in a web component, so I need to listen when it renders on the DOM only
+let myContent = document.querySelector("my-content");
 
 document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("submit", (event) => {
@@ -34,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // -------------------------------------------------------
 
       //in a regular application this user would be storaged in a database
-      const myContent = document.querySelector("my-content");
+      
       myContent.setAttribute("type", "signIn");
 
     //END-------------------------------------------------------
@@ -46,7 +47,12 @@ document.addEventListener("DOMContentLoaded", () => {
       const formData = new FormData(target);
       const tryUser = Object.fromEntries(formData);
       let signedUpUsers = sessionStorage.getItem("userArray") || null;
-      const myNotification = document.querySelector("my-notification");
+
+      if (!document.querySelector("my-notification")){
+        document.createElement('my-notification');
+      }
+
+      let myNotification = document.querySelector("my-notification");
 
       if (!signedUpUsers || signedUpUsers.length === 0) {
         myNotification.createMsg("User not found.", "error");
@@ -73,7 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (isUser) {
         myNotification.createMsg("Welcome " + isUser + "!");
-      } else {
+      } else { 
         myNotification.createMsg("User not found.", "error");
       }
     }
